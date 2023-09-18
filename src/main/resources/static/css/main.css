@@ -1,0 +1,470 @@
+@import url('https://fonts.googleapis.com/css2?family=Merienda:wght@700&display=swap');
+
+* {
+  margin:0;   /* 마진 리셋 */
+  padding:0;   /* 패딩 리셋 */
+  box-sizing: border-box;   /* 박스 영역은 테두리까지 */ 
+}
+a {
+  text-decoration:none;  /* 텍스트 링크 밑줄 없애기 */ 
+}
+ul {
+  list-style: none;
+}
+
+#container {
+  margin:0 auto;  /* 화면 중앙에 배치 */
+  width:1200px;    /* 너비 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 수직 방향으로 가운데 정렬 */
+  align-items: center; /* 수평 방향으로 가운데 정렬 */
+  min-height: 100vh; /* 최소한의 화면 높이를 100%로 설정 */
+}
+
+/*********************************/
+/* 헤더 영역 - 로고와 내비게이션 */
+/*********************************/
+header{
+  margin:0 auto;  /* 화면 중앙에 배치 */
+  width:1200px;    /*  너비 */
+  height:100px;   /* 높이 */ 
+}
+
+/*로그인*/
+#loginButtonContainer {
+  width:auto;    /* 콘텐츠 크기에 맞게 자동 조정 */
+  height:30px;   /* 높이 */ 
+  float: right;	 /* 오른쪽으로 부유(floating) */
+  margin-right: 30px; /* 오른쪽 여백 */
+  line-height: 30px; /* 버튼 세로 중앙 정렬 */
+  position: relative;/*부모 요소에 대해 position: relative; 추가*/
+}
+
+#loginButtonContainer a {
+	display: block; /* 링크를 블록 요소로 변경하여 가로 폭을 채우게 함 */
+	color: #222;
+	padding: 0 15px; /* 로그인 버튼 주위에 공간 추가 */
+	font-size: 0.9em;
+	background-color: #FFAF2F; /* 로그인 버튼 배경색 */
+	border-radius: 15px; /* 로그인 버튼 모서리를 둥글게 함 */
+}
+
+/* 로그인 버튼에 호버 효과 추가 */
+#loginButtonContainer a:hover {
+	background-color: #E0A31A;
+	color: #fff;
+}
+
+#loginButtonContainer > ul > li{
+  float:left;  /* 가로로 배치 */ 
+  padding:5px 20px;
+  border-right:1px solid #ddd;   /* 항목 오른쪽에 테두리 */ 
+}
+#loginButtonContainer > ul > li:last-child{
+  border:none;  /* 마지막 항목에는 오른쪽 테두리 없음 */  
+}
+/* 고객센터 메뉴 스타일 */
+#customerCenterMenu {
+ display: none;	
+ position: absolute;
+ top: 110%; /* 내비게이션 아래에 위치하도록 변경 */
+ left: 70px; /* 화면 가로 중앙에 정렬 */
+ transform: translateX(-50%); /* 가로 방향으로 -50% 이동하여 정확한 중앙 정렬 */
+ width: 160px;
+ background-color: rgba(255, 255, 255, 0.6);
+ margin: 0;
+ padding: 0;
+ text-align: center;
+ z-index: 10; /* 다른 요소들보다 위로 올려서 가려지지 않도록 함 */
+}
+
+#loginButtonContainer li:hover #customerCenterMenu {
+    display: block;
+
+}
+
+#customerCenterMenu li {
+    padding: 10px;
+    
+}
+
+#customerCenterMenu li:hover {
+    background-color: #FED978;
+}
+
+#customerCenterMenu li a {
+    font-size: 14px;
+    color: #000;
+    text-decoration: none;
+}
+#customerCenterMenu li a:hover {
+  color: #f00; /* 서브 메뉴 마우스 오버시 색상 바뀜 */
+}
+
+
+#headerContainer{
+	width:100%;    /*  너비 */
+    height:100px;   /* 높이 */ 
+	background-color:#FFAF2F;
+}
+
+/* 로고 */
+#logo{ 
+  float:left;   /* 왼쪽으로 플로팅 */ 
+  width:250px;   /*  너비 */ 
+  height:100px;   /* 높이 */
+  line-height:100px;  /* 세로로 중간에 맞춤 - 줄간격을 높이 값과 같게 */
+  padding-left:20px;  /* 왼쪽에 여백 */
+}
+#logo h1 {
+  font-family:'Merienda', cursive;
+  font-weight:700;
+  font-size:40px;   /* 글자 크기 */
+  color: #ADFF2F;   /* 글자 색*/
+  text-shadow:0 -1px 0 #222;  /* 그림자 색 */
+}
+
+/* 탭 메뉴 */
+#tabMenu {
+  margin: 0 auto;
+  width: 800px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  background-color: #2e86c1;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+#noticeTab,
+#boardTab {
+  width: 50%; /* 각 탭을 50%의 너비로 설정하여 반으로 나눔 */
+  text-align: center; /* 텍스트를 가운데로 정렬 */
+  position: relative; /* 탭 메뉴를 relative로 설정 */
+  box-sizing: border-box; /* width 속성에 padding을 포함시키도록 함 */
+}
+
+#noticeSubMenu,
+#boardSubMenu {
+    display: none;
+    position: absolute;
+    top: 170px;
+    background-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 4;
+    width: 800px; 
+    text-align: center; /* 가운데 정렬 */
+}
+#boardTab {
+  border-left: 1px solid white; /* 오른쪽 탭에 왼쪽에 경계선 추가 */
+}
+
+#noticeTab:hover + #noticeSubMenu,
+#noticeSubMenu:hover {
+    display: block;
+}
+
+#boardTab:hover + #boardSubMenu,
+#boardSubMenu:hover {
+    display: block;
+}
+
+
+#noticeSubMenu a,
+#boardSubMenu a {
+    display: block;
+    padding: 10px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+#noticeSubMenu a:hover,
+#boardSubMenu a:hover {
+    background-color: #f7f7f7;
+}
+
+/*영상*/
+video{
+	width: 1200px;
+	height: 533px;
+}
+/* 내비게이션 */
+nav{  
+  float:right;   /* 오른쪽으로 플로팅 */ 
+  height:70px;   /* 메뉴 영역 높이 */  
+  padding-top:10px;  /* 메뉴를 아래로 내리기 위해 */ 
+  width: 800px; /* 너비를 100%로 설정하여 창의 크기에 맞게 확장 */ 
+}
+#topMenu {  
+  height:60px; 
+}
+#topMenu > li {
+  float:left;  /* 메뉴 항목을 왼쪽으로 플로팅 */ 
+  position: relative;  /* 서브 메뉴를 absolute로 하기 위해, 이 부분을 relative로 */  
+}
+#topMenu > li > a{
+  display:block;  /* 링크 텍스트는 블록으로 */ 
+  color:#fff;  /* 글자 색 */
+  font-weight:600;  /* 글자 굵기 */
+  text-shadow:0 1px #07c;  /* 그림자 추가 */
+  padding:20px 60px;  /* 패딩 */ 
+}
+#topMenu > li > a > span {
+  font-size : 0.5em;   /* 서브 메뉴가 있는 항목에 화살표 표시 */   
+}
+#topMenu > li > a:hover {
+  color:#000;  /* 마우스 오버하면 색상 바뀜 */ 
+  text-shadow:0 -1px #07c;  /* 글자가 너무 굵어지지 않도록 */
+}
+
+#topMenu > li > ul { /* 서브 메뉴 스타일 */
+  display: none;  /* 서브 메뉴 처음에는 화면에 안 보이게 */ 
+  position:absolute;  /* 서브 메뉴 포지셔닝 */ 
+  width:160px;
+  background:rgba(255,255,255,0.6);  /* 슬라이드 쇼 비치도록 배경 색 조절 */
+  left:20px;     
+  margin:0;
+}
+#topMenu > li > ul > li {    
+  padding:10px 10px 10px 30px;   /* 서브 메뉴 항목 */
+}
+#topMenu > li > ul > li > a { 
+  font-size:14px;   
+  padding:10px;
+  color:#000;  
+}
+#topMenu > li:hover > ul {
+  display: block;  /* 메인 메뉴 항목 위로 오버하면 서브 메뉴 표시 */
+  z-index:10;  /* 슬라이드 쇼에 가리지 않게 조절 */ 
+}
+#topMenu > li > ul > li > a:hover {
+  color:#f00;  /* 서브 메뉴 마우스 오버하면 색상 바뀜 */   
+} 
+
+/**************************************/
+/*   콘텐츠 영역  */
+/**************************************/
+
+#content-main{
+	 flex-grow: 1; /* 콘텐츠 영역이 남은 공간을 모두 차지하도록 Flexbox 설정 */
+	overflow-y: auto; /* 콘텐츠가 넘칠 경우 스크롤 생성 */
+	margin-bottom: 200px; /* 콘텐츠와 푸터 사이에 여백(margin) 추가 */
+}
+
+#NewJeans {
+  width: 100%;
+  max-width: 800px; /* 원하는 값으로 조정하세요 */
+  margin: 0 auto; /* 왼쪽과 오른쪽 마진을 "auto"로 설정하여 div를 가운데로 정렬합니다 */
+  text-align: center; /* div 내부의 텍스트를 가운데로 정렬합니다 */
+}
+/* h1 스타일 */
+#NewJeans h1 {
+ font-size: 50px;
+ text-align: center;
+ font-family: 'Black Han Sans', 'Nanum Pen Script', sans-serif;
+
+}
+
+/* h3 스타일 */
+#NewJeans h3 {
+  font-size: 20px; /* 폰트 사이즈 20px */
+}
+
+#NewJeans img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+}
+
+#NewJeans a {
+  display: inline-block;
+  color: #fff; /* 글씨 색상을 흰색으로 변경 */
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #000; /* 버튼 색상을 검은색으로 변경 */
+  border-radius: 30px; /* 둥근 모양의 버튼을 위해 큰 값을 지정 */
+  text-align: center; /* 텍스트를 가운데 정렬 */
+  text-decoration: none; /* 기본 텍스트 밑줄 없앰 */
+  margin: 10px; /* 버튼 간격 조정 */
+}
+
+/* 버튼에 호버 효과 추가 */
+#NewJeans a:hover {
+  background-color: #f0f0f0; /* 호버 시에 배경색을 연한 흰색으로 변경 */
+  color: #000; /* 호버 시에 글씨 색상을 검은색으로 변경 */
+}
+
+img {
+  display: block; /* 이미지를 블록 요소로 설정하여 가로 폭을 채우게 함 */
+  margin: 0 auto; /* 가운데로 정렬 */
+  max-width: 1200px; /* 최대 너비 1200px */
+  height: auto; /* 세로 크기 자동 조절 */
+}
+
+#nike {
+  width: 100%;
+  max-width: 800px; /* 원하는 값으로 조정하세요 */
+  margin: 0 auto; /* 왼쪽과 오른쪽 마진을 "auto"로 설정하여 div를 가운데로 정렬합니다 */
+  text-align: center; /* div 내부의 텍스트를 가운데로 정렬합니다 */
+}
+/* h1 스타일 */
+#nike h1 {
+ font-size: 50px;
+ text-align: center;
+ font-family: 'Black Han Sans', 'Nanum Pen Script', sans-serif;
+
+}
+
+/* h3 스타일 */
+#nike h3 {
+  font-size: 18px; /* 폰트 사이즈 20px */
+}
+
+#nike a {
+  display: inline-block;
+  color: #fff; /* 글씨 색상을 흰색으로 변경 */
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #000; /* 버튼 색상을 검은색으로 변경 */
+  border-radius: 30px; /* 둥근 모양의 버튼을 위해 큰 값을 지정 */
+  text-align: center; /* 텍스트를 가운데 정렬 */
+  text-decoration: none; /* 기본 텍스트 밑줄 없앰 */
+  margin: 10px; /* 버튼 간격 조정 */
+}
+
+/* 버튼에 호버 효과 추가 */
+#nike a:hover {
+  background-color: #f0f0f0; /* 호버 시에 배경색을 연한 흰색으로 변경 */
+  color: #000; /* 호버 시에 글씨 색상을 검은색으로 변경 */
+}
+
+#Trending {
+  width: 100%;
+  max-width: 1200px; /* 원하는 값으로 조정하세요 */
+  margin: 0 auto; /* 왼쪽과 오른쪽 마진을 "auto"로 설정하여 div를 가운데로 정렬합니다 */
+}
+
+#Trending img {
+  width: 580px; /* 이미지 너비 */
+  height: 475px; /* 이미지 높이 */
+}
+
+.image-wrapper {
+  display: inline-block; /* 이미지를 가로로 나열하기 위해 inline-block 사용 */
+  margin: 0 5.9px; /* 이미지 사이에 약간의 여백 추가 */
+  position: relative; /* 버튼 컨테이너 위치 지정을 위해 상대적인 위치 설정 */
+}
+
+.button-container {
+  position: absolute; /* 버튼 컨테이너를 이미지 안에 상대적으로 위치 */
+  bottom: 49px; /* 아래 여백 */
+  left: 84px; /* 왼쪽 여백 */
+}
+
+#Trending img:first-child {
+  margin-left: 0; /* 첫 번째 이미지의 왼쪽 여백 없애기 */
+}
+
+#Trending img:last-child {
+  margin-right: 0; /* 마지막 이미지의 오른쪽 여백 없애기 */
+}
+
+#Trending a {
+  display: inline-block;
+  color: #000; /* 글씨 색상을 흰색으로 변경 */
+  padding: 8px 26px;
+  font-size: 13px;
+  font-weight: bold; /* 텍스트를 두껍게(bold) 설정 */
+  background-color: #fff; /* 버튼 색상을 검은색으로 변경 */
+  border-radius: 30px; /* 둥근 모양의 버튼을 위해 큰 값을 지정 */
+  text-align: center; /* 텍스트를 가운데 정렬 */
+  text-decoration: none; /* 기본 텍스트 밑줄 없앰 */
+  margin: 1px; /* 버튼 간격 조정 */
+}
+
+#Trending h3 {
+  font-size: 19px;
+  color: #fff; /* 글씨 색상을 흰색(#ffffff)으로 변경 */
+  position: relative; /* 위치를 조정하기 위해 상대적인 위치 지정 */
+  top: -25px; /* 원하는 값으로 조정하여 h3 요소를 위로 또는 아래로 이동 */
+  left: 5px;
+}
+
+/* 버튼에 호버 효과 추가 */
+#Trending a:hover {
+  background-color: #c0c0c0; /* 호버 시에 배경색을 연한 흰색으로 변경 */
+}
+
+#Featured {
+  position: relative; /* Featured 영역 내부의 상대적인 위치 설정을 위해 추가 */
+  max-width: 1200px; /* Featured 영역의 최대 너비 */
+  margin: 0 auto;
+  overflow: hidden; /* Featured 영역에서 가로 스크롤 방지 */
+}
+
+.image-slide {
+  display: flex; /* 이미지를 가로로 나열하기 위해 flex 사용 */
+  overflow: auto; /* 넘치는 이미지를 숨김 */
+  width: 100%;
+  
+}
+
+.image-slide img {
+  flex: 0 0 366px; /* 이미지의 가로 세로 크기를 366px로 설정 */
+  height: 366px;
+  transition: transform 0.3s ease;
+  margin-right: 4px; /* 사진 사이의 간격을 4px로 설정 */
+}
+.image-slide img:last-child {
+  margin-right: 0; /* 마지막 사진 사이의 간격 없애기 */
+}
+
+/******************/
+/*   푸터 영역    */
+/******************/
+message
+footer{   
+  width: 100%;
+  height: 100px; /* 푸터 높이 */
+  border-top: 2px solid #222;
+  background-color: #FFAF2F;
+}
+#bottomMenu{
+  width:100%;
+  height:20px;
+  position:relative;  
+}
+#bottomMenu ul {
+  margin-top:15px;  
+}
+#bottomMenu ul li{
+  float:left;  /* 가로로 배치 */ 
+  padding:5px 20px;
+  border-right:1px solid #ddd;   /* 항목 오른쪽에 테두리 */ 
+}
+#bottomMenu ul li:last-child{
+  border:none;  /* 마지막 항목에는 오른쪽 테두리 없음 */  
+}
+#bottomMenu ul li a, #bottomMenu ul li a:visited {  
+  font-size:15px;  /* 글자 크기 */ 
+  color:#666;   /* 글자 색 */ 
+}
+#sns {
+  position:absolute;  
+  right:0;  /* 오른쪽 끝에 배치 */ 
+}
+#sns ul li{
+  border:none;  /* 테두리 없이 */
+  padding:5px;   
+} 
+#company{
+  clear:left;  /* 플로팅 해제. clear:both도 가능 */
+  margin-top:25px;  /* 위쪽 마진 */
+  margin-left:20px;  /* 왼쪽 마진 */ 
+}
+p {
+  font-size:14px;  /* 글자 크기 */
+  color:#aaa;    /* 글자 색*/ 
+}

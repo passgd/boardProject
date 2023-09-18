@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.kosa.pro7.mappers.NoticeDAO"> 
+
+	<resultMap id="notice" type="NoticeDTO">
+	    <result property="noticeid" column="noticeid"/>
+    	<result property="title" column="title"/>
+    	<result property="content" column="content"/>
+    </resultMap>
+    
+    <select id="noticeTop" parameterType="map" statementType="CALLABLE">
+        {call NOTICETOP(#{notice_cursor
+        	, mode=OUT
+        	, jdbcType=CURSOR
+        	, javaType=java.sql.ResultSet
+        	, resultMap=notice}
+        )}
+    </select>
+
+    <select id="noticeList" parameterType="map" statementType="CALLABLE" >
+        {call NOTICELIST(
+            #{p_search_noticeid},
+            #{p_start_row},
+            #{p_end_row},
+            #{notice_cursor
+            , mode=OUT
+            , jdbcType=CURSOR
+            , javaType=java.sql.ResultSet
+            , resultMap=notice}
+        )}
+    </select>
+
+	<select id="totalCount" resultType="int">
+	    SELECT COUNT(*)
+	    FROM notice
+	    <where>
+	        <if test="searchTitle != null and !searchTitle.isEmpty()">
+	            AND noticeid LIKE CONCAT(CONCAT ('%', #{searchTitle}), '%')
+	        </if>
+	    </where>
+	</select>
+
+	<select id="noticeView" resultType="NoticeDTO">
+		  select *
+		  	from notice
+		  	where noticeid = #{noticeid}
+	</select>
+	
+	 <update id="noticeUpdate">
+    		UPDATE notice
+    			SET
+		        title = #{title},
+		        contents = #{contents},
+		        fixed_yn = #{fixed_yn},
+		        mod_date = sysdate
+   		 WHERE noticeid = #{noticeid}
+	</update>
+	
+	<insert id="noticeInsert">
+		{call NOTICEINSERT (
+              #{title}
+            , #{contents}
+            , #{email, jdbcType=VARCHAR}
+            , #{fixed_yn}
+        )}
+	</insert>
+	
+	<update id="noticeCount" statementType="CALLABLE">
+	    {call NOTICECOUNT (
+	        #{noticeid}
+	    )}
+	</update>
+	
+	<delete id="noticeDelete" statementType="CALLABLE">
+		{call NOTICEDELETE(
+			  #{noticeid}
+			, #{email}
+		)}
+	</delete>
+	
+</mapper>

@@ -1,0 +1,55 @@
+/* noticelist.css */
+
+/* Notice 리스트 전용 스타일 */
+.notice-list-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.notice-list-description {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.notice-list-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notice-list-date {
+    font-size: 14px;
+    color: #777;
+}
+
+/* Notice 리스트 버튼 스타일 */
+.notice-list-button {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.notice-list-button:hover {
+    background-color: #0056b3;
+}
+
+/* Notice 리스트 링크 스타일 */
+.notice-list-link {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+}
+
+.notice-list-link:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
