@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kosa.pro7.mappers.CommentDAO">
+
+	<insert id="insertComment" >
+		insert into board_comment(
+			  commentid
+			, boardid
+			, email
+			, reg_date
+			, contents			
+		) values (
+			  seq_comment.nextval
+			, #{boardid}
+			, #{email}
+			, sysdate
+			, #{contents}
+		) 
+	</insert>
+
+</mapper>

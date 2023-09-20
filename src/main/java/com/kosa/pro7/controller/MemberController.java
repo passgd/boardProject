@@ -66,8 +66,7 @@ public class MemberController {
 	//로그인
 	@PostMapping("/login")
 	@ResponseBody
-	public Map<String, Object> login(@RequestBody MemberDTO member, HttpServletRequest request) throws Exception {
-		HttpSession session = request.getSession();
+	public Map<String, Object> login(@RequestBody MemberDTO member, HttpSession session) throws Exception {
 		
 		Map<String, Object> result = new HashMap<>();
 		

@@ -9,7 +9,6 @@
 </head>
 <body>
 <h1>공지사항 목록</h1>
-<h1>회원 목록</h1>
 
 	 <form name="pageForm" id="pageForm" action="<c:url value='/notice/list'/>" method="post">
 		 <input type="hidden" name="pageNo" id="pageNo" value="${result.notice.pageNo}" />
@@ -34,11 +33,20 @@
 				<input type="submit" value="검색"/>
 			</div>
 		</div>	
+		
+		<label>
+			<input type="checkbox" name="selectall" value="selectall" onclick="selectAll(this)">
+			전체 선택
+		</label>
+		<div class="buttons">
+			<button class="button" type="button" id="deleteBtn">선택한 항목 삭제</button>
+		</div>
 
 		<button id="noticeInsertButton" type="button">등록</button>
 
     <table border="1" class="notice-list-table">
 	  <tr id="noticeItem" style="display:none;" >
+	  		<td><input id="checkItem" type="checkbox" class="item" /></td>
             <td id="noticeid"></td>
             <td id="title"></td>
             <td id="email"></td>
@@ -47,7 +55,7 @@
          </tr>  
     
         <tr>
-
+            <th>체크</th>
             <th>번호</th>
             <th>제목</th>
             <th>작성자</th>
@@ -57,6 +65,9 @@
     <tbody id="noticeList">
 		<c:forEach var="notice" items="${result.list}">
 		    <tr class="notice-list-tr">
+		    <td>
+		    	<input type="checkbox" class="item" name="item" onclick="checkSelectAll()" value="${notice.noticeid}">
+		    </td>
 		        <td>${notice.noticeid}</td>
 		        <td onclick="dialogDetail(${notice.noticeid})">${notice.title}</td>
 		        <td>${notice.email}</td>
@@ -88,7 +99,7 @@
       	</c:if>	
 </div>
 
-		<div id="insertNotice" title="게시판 등록">
+		<div id="insertNotice" title="공지사항 등록">
 	        <div id="insertContent">
 		        <input type="text" id="inTitle" placeholder="제목"><br>
 		        <textarea id="inContents" placeholder="내용"></textarea><br>
@@ -119,7 +130,7 @@
 
 			<input type="text" name="title" id="updateNoticeTitle" placeholder="제목" class="text_title" value="${notice.title}"><br>
 		    <textarea name="contents" id="updateNoticeContents" placeholder="내용" class="notice_ct">${notice.contents}</textarea>
-		    <p><input type="hidden" id="email" name="updateNoticeEmail" value="${loginMember.email}"  readonly></p>
+		    <p><input type="hidden" id="updateNoticeEmail" name="updateNoticeEmail" value="${loginMember.email}"  readonly></p>
 		    <span class="radio-group">
 	    	상단고정 여부　      
 	        <label><input type="radio" name="fixed_yn" class="updateFixed_yn" id="updateFixed_yn" value="Y" checked>Y</label>
@@ -283,7 +294,6 @@ function dialogUpdate() {
             $("#contents2").text(contents3);
             $("#fixed_yn2").prop("checked", fixed_yn3 === "Y");
     });
-    
 }
 
 //등록하기
@@ -311,9 +321,7 @@ function dialogInsert() {
     .then(json => {
             alert(json.message);
             insertNotice.dialog("close");
-
     });
-    
 }
 
 //삭제하기
@@ -336,16 +344,116 @@ function dialogDelete() {
     .then(json => {
             alert(json.message);
             deleteNotice.dialog("close");
-
     });
     
 }
 
+//체크 박스 삭제
+document.querySelector("#deleteBtn").addEventListener("click", e => {
+	e.preventDefault();
+	const noticeList = document.querySelector("#noticeList");
+	let ids = [] ;
+	const items = document.querySelectorAll(".item:checked");
+	
+	if(items.length == 0){
+		alert("삭제할 항목을 선택하세요~~");
+		return false;
+	}
+	
+	if(!confirm("삭제 하시겠습니까?"))
+		return false;
+	items.forEach(item => {
+		ids.push(item.value);
+	});
+	console.log(ids);
+	
+	const param = {
+			ids: ids,
+			noticeid: document.querySelector("#noticeList tr:last-child td:first-child input[type='checkbox']").value
+	};
+	
+	fetch("<c:url value='/notice/checkDelete'/>",{
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json; charset=UTF-8",
+	},
+		body: JSON.stringify(param),
+	})
+	.then((response) => response.json())
+	.then ((json) =>{
+		alert(json.message);
+		if(json.status){
+			//1. 화면 부분에 있는 자료를 삭제
+			// 삭제 함수
+			for(let i = items.length-1; i >= 0; i--){
+				noticeList.removeChild(items[i].parentNode.parentNode);
+			}
+			//2. 서버에서 삭제 건수 만큼 얻는 공지사항 목록 출력
+			const noticeListJson = json.noticeList;
+			const noticeItem = document.querySelector("#noticeItem");
+			
+			for(let i = 0; i < noticeListJson.length; i++){
+				const notice = noticeListJson[i];
+				const newNoticeItem = noticeItem.cloneNode(true);
+				const title = newNoticeItem.querySelector("#title");
+				
+				newNoticeItem.querySelector("#noticeid").innerText = notice.noticeid; 
+				newNoticeItem.querySelector("#title").innerText = notice.title; 
+				newNoticeItem.querySelector("#email").innerText = notice.email; 
+				newNoticeItem.querySelector("#reg_date").innerText = notice.reg_date; 
+				newNoticeItem.querySelector("#view_count").innerText = notice.view_count; 
+				
+				//이벤트 핸들링
+				newNoticeItem.querySelector(".item").value = notice.noticeid;
+				newNoticeItem.querySelector(".item").addEventListener("click", e => checkSelectAll());
+				newNoticeItem.addEventListener("click", e => jsDetailView(notice.noticeid));
+				
+				newNoticeItem.style.display= "";
+				noticeList.appendChild(newNoticeItem);
+			}
+		}else{
+			alert(json.message);
+		}
+	});
+	return false;
+});
 /*--------------------------------------------기타------------------------------------------------------*/
 function jsPageNo(pageNo){
 	document.querySelector("#pageForm > #pageNo").value = pageNo;
 	document.querySelector("#pageForm").submit();
 }
+
+//체크박스 전체 선택
+function selectAll(selectAll){
+	const checkboxes
+	=	document.querySelectorAll(".item");
+	
+	checkboxes.forEach((checkbox) => {
+		checkbox.checked = selectAll.checked;
+	})
+	$("#checkItem").prop("checked", false);
+}
+
+//체크박스 하나 취소 전체 선택 해제
+function checkSelectAll(){
+	//전체 체크 박스
+	const checkboxes = 
+		document.querySelectorAll('input[name="item"]');
+	//선택 체크박스
+	const checked = 
+		document.querySelectorAll('input[name="itme"]:checked');
+	//select all 체크박스
+	const selectAll = 
+		document.querySelector('input[name="selectall"]');
+	
+	//체크박스 하나라도 선택 해제되면 전체 선택 해제
+	if(checkboxes.length === checked.length){
+		selectAll.checked = true;
+	}else{
+		selectAll.checked = false;
+	}
+}
+
 </script>
 </body>
 </html>

@@ -81,4 +81,25 @@
 		)}
 	</delete>
 	
+	<delete id="noticeDeletes" >
+		delete from notice 
+			where noticeid in
+			<foreach item="noticeid" collection="ids"  open="("  separator="," close=")"> 
+				#{noticeid}		
+			</foreach> 
+	</delete>
+	
+	<select id="getNoticeListBoforeN" parameterType="map">
+		 select * from (
+		     select * from notice
+			 <![CDATA[
+		     where noticeid < #{noticeid} 
+			 ]]>
+		     order by noticeid desc
+		 ) A
+		 <![CDATA[
+		 where rownum <= #{N}		
+		 ]]>
+	</select>
+	
 </mapper>

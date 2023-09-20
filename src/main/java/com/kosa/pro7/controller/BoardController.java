@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kosa.pro7.domain.BoardDTO;
 import com.kosa.pro7.service.BoardService;
+
+import oracle.jdbc.proxy.annotation.Post;
 
 /*
 	더 보기
@@ -32,146 +35,154 @@ import com.kosa.pro7.service.BoardService;
 	3. 클라이언트에서 전달받는 Data을 이용해서 HTML 출력
 */
 @Controller
+@RequestMapping("/board")
 public class BoardController {
 	
 	@Autowired
 	private BoardService service;
 
 		//게시판 페이징
-		@ResponseBody
-		@RequestMapping(value="/board/ajaxList.do", method = RequestMethod.POST)
-		public Map<String, Object> ajaxlist2(@RequestBody BoardDTO board, HttpServletRequest request, HttpServletResponse response) throws Exception {
-			System.out.println("board.controller.BoardajaxList2() ");
-			Map<String, Object> result = new HashMap<String, Object>();
-			try {
-				List<BoardDTO> boardList = service.boardPageList2(board);
-				result.put("status", true);
-				result.put("boardList", boardList);
-			} catch (Exception e) {
-				result.put("status", true);
-				result.put("message", "서버에 오류 발생");
-				e.printStackTrace();
-			}
-			System.out.println(result);
-			return result;
-		}
-
-		
-		//게시판 전체보기
-		@GetMapping("/board/list.do")
+		@RequestMapping("/list")
 		public String list(BoardDTO board, Model model) throws Exception {
-			System.out.println("board.controller.BoardList() ");
+			System.out.println("board.controller.BoardajaxList2() ");
 			
 			try {
-				model.addAttribute("boardList", service.boardPageList(board));
+				model.addAttribute("result", service.boardPageList(board));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			return "board/boardList";
+			return "board/list";
 		}
-		
+	
 		//게시판 상세보기
-		@RequestMapping(value="/board/view.do", method= RequestMethod.GET)
-		public String view(BoardDTO board, Model model) throws Exception {
+		@PostMapping("/view")
+		@ResponseBody
+		public BoardDTO view(@RequestBody BoardDTO board) throws Exception {
 			System.out.println("board.controller.BoardView()");
 			
-			try {
-				model.addAttribute("status", true);
-				BoardDTO boardView = service.view(board.getBoardid());
-				model.addAttribute("board", boardView);
-			} catch (Exception e) {
-				model.addAttribute("status", false);
-				model.addAttribute("message", "서버에 오류 발생");
-				e.printStackTrace();
-			}
-			return "board/view";
-		}
-		
-		public String ajaxview(BoardDTO board, HttpServletRequest request, HttpServletResponse response) throws Exception {
-			JSONObject result = new JSONObject();
-			System.out.println("board.controller.BoardAjaxView()");
+			BoardDTO boardView = service.view(board.getBoardid());
 			
-			try {
-				service.boardCount(board.getBoardid());
-				
-				BoardDTO content = service.view(board.getBoardid());
-				result.put("board", content);
-				result.put("boardid", content.getBoardid());
-				result.put("title", content.getTitle());
-				result.put("contents", content.getContents());
-				result.put("email", content.getEmail());
-				result.put("reg_date", content.getReg_date());
-				result.put("view_count", content.getView_count());
-				System.out.println("상세보기 확인: " + content);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return result.toString();
+			service.boardCount(board.getBoardid());
+			
+			System.out.println(boardView);
+					
+			return boardView;
 		}
 		
 		//게시판 등록
-		public String insertForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
-	    	System.out.println("board.controller.insertForm() ");
-			
-	    	return "board/boardinsert.jsp";
-		}
-		public String insert(BoardDTO board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		@PostMapping("/insert")
+		@ResponseBody
+		public Map<String, Object> insert(@RequestBody BoardDTO board) throws Exception {
 			System.out.println("board.controller.BoardInsert()");
 
-			JSONObject jsonResult = new JSONObject();
-			boolean status = service.insert(board);
+			Map<String, Object> result = new HashMap<>();
 			
-			jsonResult.put("status", status);
-			jsonResult.put("message", status ? "공지사항 글 작성이 등록되었습니다" : "공지사항 글 작성시 오류가 발생하였습니다");		
-			return jsonResult.toString();
+			System.out.println("등록 확인: " + result);
+			if(service.insert(board)) {
+				result.put("message", "게시판 글 등록이 완료 되었습니다.");
+			}else {
+				result.put("message", "게시판 글 등록 중 오류가 발생했습니다.");
+			}
+			return result;
 		}
 		
 		//게시판 수정
-		public String updateForm(BoardDTO board, HttpServletRequest request, HttpServletResponse response) throws Exception {
-	    	System.out.println("board.controller.updateForm() ");
-			
-			try { 
-				request.setAttribute("board", service.view(board.getBoardid()));
-	        } catch (Exception e) { 
-	        	e.printStackTrace();
-	        }
-	    	return "board/boardupdate.jsp";
-		}
-		public String update(BoardDTO board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		@PostMapping("/update")
+		@ResponseBody
+		public Map<String, Object> update(@RequestBody BoardDTO board) throws Exception {
 			System.out.println("board.controller.BoardUpdate()");
-			JSONObject jsonResult = new JSONObject();
-			boolean status = service.update(board);
 			
-			jsonResult.put("status", status);
-			jsonResult.put("message", status ? "공지사항 글 수정이 되었습니다" : "공지사항 글 수정시 오류가 발생하였습니다");
+			Map<String, Object> result = new HashMap<>();
 			
-			return jsonResult.toString();
+			boolean update = service.update(board);
+			
+			if(update) {
+				result.put("message", "성공적으로 게시판 글이 수정 되었습니다.");
+				result.put("boardUpdate", update);
+			}else {
+				result.put("message", "글 수정중 오류가 발생했습니다.");
+			}
+			return result;
 		}
 
 		//게시판 삭제
-		public String delete(BoardDTO board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		@PostMapping("/delete")
+		@ResponseBody
+		public Map<String, Object> delete(@RequestBody BoardDTO board) throws Exception {
 			System.out.println("board.controller.BoardDelete()");
-			JSONObject jsonResult = new JSONObject();
-			
-			boolean status = service.delete(board.getBoardid());
-			
-	    	jsonResult.put("status", status);
-	    	jsonResult.put("message", status ? "공지 사항 글이 삭제되었습니다" : "공지사항 글 삭제시 오류가 발생하였습니다");
 
-	    	return jsonResult.toString();
+			Map<String, Object> result = new HashMap<>();
+			
+			boolean deleteResult = service.delete(board.getBoardid());
+			
+			System.out.println("삭제 확인: " + deleteResult);
+			
+			if(deleteResult) {
+				result.put("message", "게시판 글 삭제가 완료 되었습니다.");
+			}else {
+				result.put("message", "게시판 글 삭제중 오류가 발생했습니다.");
+			}
+			return result;
 		}
 
 		//게시판 전체 삭제
-		public String deleteAll(String[] boardids, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		@PostMapping("/checkDelete")
+		@ResponseBody
+		public Map<String, Object> deleteAll(@RequestBody Map<String, Object> params) throws Exception {
 			System.out.println("board.controller.BoardDeleteAll()");
-			JSONObject jsonResult = new JSONObject();
 			
-			boolean status = service.deleteAll(boardids);
+			Map<String, Object> result = new HashMap<>();
 			
-			jsonResult.put("status", status);
-			jsonResult.put("message", status ? "글이 삭제되었습니다" : "오류가 발생하였습니다. 다시 시도해주세요.");
+			List<String> idsList = (List<String>) params.get("ids");
+			
+			//삭제된 게시판 boardid 목록 얻기
+			int deleteBoardIds = service.boardDeleteAll(params);
+			System.out.println("deleteBoard cnt = " + deleteBoardIds);
+			
+			if(deleteBoardIds > 0) {
+				result.put("status", true);
+				result.put("message", "게시판 삭제가 완료 되었습니다.");
+				
+				//마지막 삭제 boardid 가져오기
+				String lastDeleteBoardid = idsList.get(idsList.size() -1 );
+				
+				//서비스를 통해 삭제된 게시판 목록 가져오기
+				int N = deleteBoardIds;
+				BoardDTO boardDTO = new BoardDTO();
+				boardDTO.setIds(new String[] {lastDeleteBoardid});
+				boardDTO.setN(N);
+				boardDTO.setBoardid(Integer.parseInt((String) params.get("boardid")));
+				
+				List<BoardDTO> pageBoardList = service.getBoardList(boardDTO);
+				System.out.println("pageBoardList = " + pageBoardList);
+				System.out.println(pageBoardList);
+				result.put("boardList", pageBoardList);
+			}else {
+				result.put("message", "게시판 삭제 중 오류가 발생했습니다.");
+			}
+			return result;
+		}
+		
+		//답글
+		@PostMapping("/reply")
+		@ResponseBody
+		public Map<String, Object> reply(@RequestBody BoardDTO board, Model model) throws Exception{
+			System.out.println("board.controller.BoardReply()");
+			
+			Map<String, Object> response = new HashMap<>();
 
-	    	return jsonResult.toString();
+			int result = service.reply(board);
+			
+			if (result > 0 ){
+				response.put("message", "답변 등록에 성공했습니다.");
+				
+				String AutoEmail = "yso3038@naver.com";
+
+				service.sendMail(AutoEmail);
+			}else {
+				response.put("message", "답변 등록에 실패하였습니다.");
+			}
+			return response;
 		}
 		
 }

@@ -12,7 +12,6 @@
 <link rel="stylesheet" href="<c:url value='/css/main.css'/>" />
 <link rel="stylesheet" href="<c:url value='/css/noticelist.css'/>">
 
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Pen+Script&display=swap" rel="stylesheet">

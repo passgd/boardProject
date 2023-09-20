@@ -1,6 +1,7 @@
 package com.kosa.pro7.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,19 +111,40 @@ public class NoticeController {
 	}
 
 	//공지사항 전체 삭제
-//	public String deletes(NoticeDTO notice, HttpServletRequest request, HttpServletResponse response) throws Exception {
-//		System.out.println("notice.controller.NoticeDeleteAll()");
-//		JSONObject jsonResult = new JSONObject();
-//		boolean status = noticeService.noticeDeletes(notice);
-//		
-//		jsonResult.put("status", status);
-//    	jsonResult.put("message", status ? "공지사항 글 삭제 되었습니다" : "공지사항 글 삭제시 오류가 발생하였습니다");
-//		
-//		if (status) {
-//        	jsonResult.put("noticeList", noticeService.getNoticeList(notice));
-//    	}
-//
-//    	return jsonResult.toString();
-//	}
+	@PostMapping("/checkDelete")
+	@ResponseBody
+	public Map<String, Object> deletes(@RequestBody Map<String, Object> params) throws Exception {
+		System.out.println("notice.controller.NoticeDeleteAll()");
+		
+		Map<String, Object> result = new HashMap<>();
+		
+		List<String> idsList = (List<String>) params.get("ids");
+//		String[] idsArray = idsList.toArray(new String[idsList.size()]);
+		
+		//삭제된 공지사항의 noticeid 목록 얻기
+		int deleteNoticeIds = service.noticeDeletes(params);
+
+		if (deleteNoticeIds > 0) {
+		    result.put("status", true);
+		    result.put("message", "공지사항 삭제가 완료 되었습니다.");
+
+		    // 마지막 삭제된 noticeid 가져오기
+		    String lastDeleteNoticeId = idsList.get(idsList.size() - 1);
+
+		 // 서비스를 통해 삭제된 공지사항 이후의 공지사항 목록을 가져옵니다.
+		    int N = idsList.size();
+		    NoticeDTO noticeDTO = new NoticeDTO();
+		    noticeDTO.setIds(new String[]{lastDeleteNoticeId});
+		    noticeDTO.setN(N);
+		    noticeDTO.setNoticeid(Integer.parseInt((String) params.get("noticeid")));
+
+		    List<NoticeDTO> pageNoticeList = service.getNoticeList(noticeDTO);
+		    System.out.println(pageNoticeList);
+		    result.put("noticeList", pageNoticeList);
+		} else {
+		    result.put("message", "공지사항 삭제 중 오류가 발생했습니다.");
+		}		
+    	return result;
+	}
 	
 }

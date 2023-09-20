@@ -15,11 +15,11 @@
         </div>
         
        <label id="boardTab" for="tab2">
-    <a href="<c:url value='/board/list.do'/>">전체게시판</a></label>
+    <a href="<c:url value='/board/list'/>">전체게시판</a></label>
         <div class="subMenu" id="boardSubMenu">
             <h3>전체게시판</h3>
             <c:forEach var="board" items="${boardTop5}">
- 					<a href="<c:url value='board?boardid=${boardid}'/>">${board.title} </a>
+ 					<a href="#" onclick="boardDetail(${board.boardid})">${board.title} </a>
             </c:forEach>
         </div>
     
@@ -194,9 +194,22 @@
 	</div>
 </div> 
 
-<script type="text/javascript">
-/*--------------------------------------------버튼----------------------------------------------*/
+<div id="detailBoard" title="글 상세보기" >
+	<div class="detailBoard">
+	  	<input type="hidden" name="boardid" id="boardId" value="${board.boardid}"/> 
+      	<h3 id="boardTitle">[  ] </h3>
+      	<hr>
+	      <br>
+	      <div class="meta-info" id="info2">
+	  		작성자 :  <span id="boardEmail">${board.email}</span>  |　 작성날짜 :  <span id="boardReg_date">${board.reg_date}</span>　 |　 조회수 :  <span id="boardView_count">${board.view_count}</span>
+		  </div>
+	      <div class="contents" id="boardContents">
+	    	${board.contentsHTML}
+		  </div>
+	</div>
+</div> 
 
+<script type="text/javascript">
 /*--------------------------------------------대화상자----------------------------------------------*/
 /* 공지사항 상세 */
 $(document).ready(function() {
@@ -213,6 +226,20 @@ $(document).ready(function() {
 	});
 });
 
+/* 게시판 상세 */
+$(document).ready(function() {
+	$("#detailBoard").dialog({
+	    autoOpen: false,
+	    modal: true,
+	    width: 800,
+	    height: 500,
+	    buttons: {
+	        Close: function() {
+	            $(this).dialog("close");
+	        }
+	    }
+	});
+});
 /*--------------------------------------------실행부----------------------------------------------*/
 /* 글 상세 패치 코드 */
 function dialogDetail(noticeid) {
@@ -228,7 +255,7 @@ function dialogDetail(noticeid) {
 	        noticeid: noticeid
 	      };
 
-	      fetch("<c:url value='notice/view'/>", {
+	      fetch("<c:url value='/notice/view'/>", {
 	        method: "POST",
 	        headers: {
 	          "Content-Type": "application/json; charset=UTF-8",
@@ -250,6 +277,41 @@ function dialogDetail(noticeid) {
 	
 }
 
+/* 글 상세 패치 코드 */
+function boardDetail(boardid) {
+ 	const boardId = document.querySelector("#boardId");
+	const boardTitle = document.querySelector("#boardTitle");
+	const boardContents = document.querySelector("#boardContents");
+	const boardEmail = document.querySelector("#boardEmail");
+	const boardReg_date = document.querySelector("#boardReg_date");
+	const boardView_count = document.querySelector("#boardView_count");
+
+	
+	const param = {
+	        boardid: boardid
+	      };
+
+	      fetch("<c:url value='/board/view'/>", {
+	        method: "POST",
+	        headers: {
+	          "Content-Type": "application/json; charset=UTF-8",
+	        },
+	        body: JSON.stringify(param),
+	      })
+	      .then((response) => response.json())
+	      .then((json) => {
+	    	   boardId.innerText = json.boardid;  
+	    	   boardTitle.innerText = json.title;  
+	    	   boardContents.innerText = json.contents;  
+	    	   boardEmail.innerText = json.email;  
+	    	   boardReg_date.innerText = json.reg_date;  
+	    	   boardView_count.innerText = json.view_count;  
+	       	   $("#detailBoard").dialog("open");
+	      });
+	
+	return false;
+	
+}
 
 //서브메뉴 마우스 효과
 document.getElementById("noticeTab").addEventListener("mouseenter", function() {

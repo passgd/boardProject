@@ -23,7 +23,7 @@ public class NoticeDTO {
 	private int view_count; //조회수
 	private String fixed_yn; //고정 여부
 	private String delete_yn; 	// 삭제유무
-	private String N;
+	private int N;
 
 	private String [] ids; // 삭제시 사용될 아이디들
 	

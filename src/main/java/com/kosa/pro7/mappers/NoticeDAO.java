@@ -23,7 +23,7 @@ public interface NoticeDAO {
 	public int noticeDelete(int noticeid)throws Exception;
 	
 	//공지사항 전체삭제
-//	public int noticeDeletes(Map<String, Object> params)throws Exception;
+	public int noticeDeletes(Map<String, Object> params)throws Exception;
 	
 	//조회수
 	public int noticeCount(int noticeid)throws Exception;
@@ -38,6 +38,6 @@ public interface NoticeDAO {
 	public List<NoticeDTO> noticeList(Map<String, Object> result)throws Exception;
 	
 	//10. 게시글 삭제 후 다시 10건으로 만들어주는 메서드
-//	public List<NoticeDTO> getNoticeListBoforeN(NoticeDTO notice) throws Exception ;
+	public List<NoticeDTO> getNoticeListBoforeN(Map<String, Object> params) throws Exception ;
 
 }

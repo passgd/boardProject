@@ -3,6 +3,7 @@ package com.kosa.pro7.domain;
 import java.lang.reflect.Field;
 import java.sql.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
@@ -27,7 +28,7 @@ public class BoardDTO {
 	private Date mod_date; //수정 시간
 	private int view_count; //조회수
 	private String delete_yn; 	// 삭제유무
-	private String N;
+	private int N;
 	private int    level = 1; 
 	
 	public JSONObject getJSONObject() throws Exception {
@@ -52,10 +53,9 @@ public class BoardDTO {
         return map;
     }
 
+	private List<AttacheFileDTO> attacheFileList;
 	
-	
-	
-	private String[] boardids; // 삭제시 사용될 아이디들
+	private String[] ids; // 삭제시 사용될 아이디들
 		
 	//검색필드
 		private String searchTitle = "";
@@ -91,7 +91,7 @@ public class BoardDTO {
 			}
 		}
 		
-		public int getStarNo() {
+		public int getStartNo() {
 			return (pageNo -1) * pageLength + 1;
 		}
 		

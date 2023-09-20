@@ -59,12 +59,7 @@ public class NoticeService {
 		System.out.println("공지사항 삭제 ");
 		return 0 != noticeDAO.noticeDelete(noticeid);
 	}
-	
-//	//공지사항 전체 삭제
-//	public boolean noticeDeletes(Map<String, Object> params) throws Exception{
-//		return 0 != noticeDAO.noticeDeletes(params);
-//	}
-	
+		
 	//공지사항 상세보기
 	public NoticeDTO noticeView(int noticeid)throws Exception{
 		return noticeDAO.noticeView(noticeid);
@@ -88,4 +83,24 @@ public class NoticeService {
 		return noticeDAO.noticeCount(noticeid);
 	}
 	
+	//공지사항 전체 삭제
+	public int noticeDeletes(Map<String, Object> params) throws Exception{
+		System.out.println("NotieService.noticeDeletes()" + params);
+		return noticeDAO.noticeDeletes(params);
+	}
+	
+	//삭제된 배열 가져오기
+	public List<NoticeDTO> getNoticeList(NoticeDTO notice)throws Exception{
+		System.out.println("NoticeService.getNoticeList()");
+		
+		String[] ids = notice.getIds();
+		
+		Map<String, Object> params = new HashMap<>();
+		
+		params.put("noticeid", notice.getNoticeid());
+		
+		params.put("N", notice.getN());
+		
+		return noticeDAO.getNoticeListBoforeN(params);
+	}
 }

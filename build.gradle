@@ -42,9 +42,7 @@ dependencies {
 	// 썸네일 이미지
 //	implementation 'net.coobird:thumbnailator:0.4.19'
 	//이메일
-//	implementation "org.springframework:spring-context-support:6.0.6"
-//	implementation 'javax.mail:javax.mail-api:1.6.2'
-//	implementation 'com.sun.mail:javax.mail:1.6.2'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	//타일즈 관련 라이브러리
 	//implementation 'org.apache.tiles:tiles-core:3.0.4'
 	implementation 'org.apache.tiles:tiles-jsp:3.0.4'

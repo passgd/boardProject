@@ -17,55 +17,35 @@
 		where nrow between #{startNo} and #{endNo}
 	</sql>	
 	
-	<select id="getBoardList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	<select id="getBoardList" resultType="BoardDTO">
 		<include refid="pagingBefore"/>
 		    select 
-		        a.* 
-		    from board a
-
+		        level, pid, boardid, title, email, reg_date, view_count
+		    from board 
+		    where delete_yn = 'N'
 			<!-- 검색 조건 설정 하는 부분  -->
-			<if test="searchTitle != '' and searchTitle != null">
-				where title like concat(concat('%', #{searchTitle}), '%')
-			</if>   
-		
-			order by boardid desc
+	        <if test="searchTitle != null and !searchTitle.isEmpty()">
+	            AND boardid LIKE CONCAT(CONCAT('%', #{searchTitle}), '%')
+	        </if>  
+			start with pid = 0
+			CONNECT BY PRIOR boardid = pid
+			order SIBLINGS by boardid desc
 					 
 		<include refid="pagingAfter"/>
 		
 	</select>
-
-	<select id="boardAllList" resultType="BoardDTO">
-		select 
-			boardid
-			, title
-			, email
-			, reg_date
-			, view_count 
-		from board 
-		order by boardid desc
-	</select>
 	
 	<select id="totalCount" resultType="int">
 	    SELECT COUNT(*)
-	    FROM board
-	    <where>
-	        <if test="searchTitle != null and !searchTitle.isEmpty()">
-	            AND boardid LIKE CONCAT('%', #{searchTitle}, '%')
-	        </if>
-	    </where>
+	    	FROM board
 	</select>
 	
 	<select id="view" resultType="BoardDTO" >
-		select 
-			  boardid
-			, title
-			, contents
-			, email
-			, reg_date
-			, view_count 
-		from board 
-		where boardid = #{boardid}
+		select *
+			from board 
+			where boardid = #{boardid}
 	</select>
+	
 	
 	<insert id="insert" >
 		<selectKey keyProperty="boardid" resultType="int"  order="BEFORE">
@@ -90,39 +70,40 @@
 		)
 	</insert>
 	
-<!-- 	<insert id="insertBoardReply" > -->
-<!-- 		<selectKey keyProperty="boardid" resultType="int"  order="BEFORE"> -->
-<!-- 			select  -->
-<!-- 				seq_board.nextval boardid  -->
-<!-- 			from dual -->
-<!-- 		</selectKey> -->
-<!-- 		INSERT INTO board ( -->
-<!-- 			  pid -->
-<!-- 			, boardid -->
-<!-- 			, title -->
-<!-- 			, contents -->
-<!-- 			, writer_uid -->
-<!-- 			, reg_date -->
-<!-- 		) VALUES ( -->
-<!-- 		      #{pid}  -->
-<!-- 			, #{boardid} -->
-<!-- 			, #{title} -->
-<!-- 			, #{contents} -->
-<!-- 			, #{writer_uid} -->
-<!-- 			, sysdate -->
-<!-- 		) -->
-<!-- 	</insert> -->
+	<insert id="insertBoardReply" >
+		<selectKey keyProperty="boardid" resultType="int"  order="BEFORE">
+			select 
+				seq_board.nextval boardid 
+			from dual
+		</selectKey>
+		INSERT INTO board (
+			  pid
+			, boardid
+			, title
+			, contents
+			, email
+			, reg_date
+		) VALUES (
+		      #{pid} 
+			, #{boardid}
+			, #{title}
+			, #{contents}
+			, #{email}
+			, sysdate
+		)
+	</insert>
 	
 	<update id="update">
 		update board set 
-			  title=#{title}
-			, contents=#{contents} 
-		where boardid=#{boardid}
+			  title = #{title}
+ 			, contents = #{contents} 
+ 			, mod_date = sysdate 
+		where boardid = #{boardid}
 	</update>
 	
 	<delete id="delete">
 		delete from board 
-		where boardid=#{boardid}
+		where boardid = #{boardid}
 	</delete>
 	
 	<select id="boardTop" resultType="BoardDTO">
@@ -142,48 +123,40 @@
 	<update id="boardCount">
 		update board set 
 			view_count = view_count + 1 
-		where boardId = #{boardId}
+		where boardid = #{boardid}
 	</update>
 	
-	<delete id="deleteAll" >
-		delete from board 
-		where boardid in
-		<foreach item="boardid" collection="list"  open="("  separator="," close=")"> 
+	<update id="boardDeleteAll">
+
+		update board
+		set delete_yn = 'Y' 
+		where boardid in (
+			select boardid
+			from board
+			start with boardid in (
+		<foreach item="boardid" collection="ids"  separator="," > 
 			#{boardid}		
 		</foreach> 
-	</delete>
+		)
+		  connect by prior boardid = pid
+	  )
+	</update>
 	
-	<select id="getBoardList2" resultType="BoardDTO">
-		select * from (
-			select 
-				  level, pid, boardid, step, title, email, reg_date, view_count
-			from board 
-			where delete_yn = 'N' 
-			<if test="boardid != 0">
-				<![CDATA[
-				and boardid > #{boardid}
-				]]>
-			</if>
-			start with pid=0
-			CONNECT BY PRIOR boardid = pid
-			order SIBLINGS by boardid desc  
-		) A 
-		<![CDATA[
-		where rownum <= 10
-		]]>
+	
+	
+	<select id="getboardListBoforeN" parameterType="map">
+		 select * from (
+		     select * 
+		     from board
+			 <![CDATA[
+		     where boardid < #{boardid}  
+		     and delete_yn <> 'Y'
+ 			 ]]> 
+		     order by boardid desc
+		 ) A
+		 <![CDATA[
+ 		 where rownum <= #{N}		 
+ 		 ]]> 
 	</select>
-	
-<!-- 	<select id="getboardListBoforeN"> -->
-<!-- 		 select * from ( -->
-<!-- 		     select * from board -->
-<!-- 			 <![CDATA[ -->
-<!-- 		     where boardid < #{boardid}  -->
-<!-- 			 ]]> -->
-<!-- 		     order by boardid desc -->
-<!-- 		 ) A -->
-<!-- 		 <![CDATA[ -->
-<!-- 		 where rownum <= N		 -->
-<!-- 		 ]]> -->
-<!-- 	</select> -->
 	
 </mapper>
